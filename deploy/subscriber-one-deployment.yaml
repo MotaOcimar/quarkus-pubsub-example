@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  subscriber-one-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscriber-one
+  template: 
+    metadata:
+      labels:
+        app: subscriber-one
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "subscriber-one"
+        dapr.io/app-port: "8080"
+    spec:
+      containers:
+      - name: subscriber-one
+        image: ocimar/subscriber-one
+        ports:
+        - containerPort: 8080
