@@ -15,9 +15,6 @@ public class PublisherResource {
     String pubsubName = "pubsub"; // O mesmo presente em metadata.name do arquivo .yaml do componente pubsub
     String daprUrl = "http://localhost:" + daprPort + "/v1.0/publish/" + pubsubName;
 
-
-    // TODO: Avisar que estou usando quarkus-rest-client (https://quarkus.io/guides/rest-client)
-    // TODO: Avisar que estou usando Jackson (https://quarkus.io/guides/rest-json#creating-the-maven-project)
     @POST
     public Response post(Order order) {
         System.out.println("Publishing: Topic: " + order.topic + "; Message:" + order.message);

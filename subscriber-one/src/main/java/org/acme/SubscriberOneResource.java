@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 public class SubscriberOneResource {
     
     // Rota para do Dapr pegar suas inscrições
-    // TODO: Avisar que estou usando Jackson (https://quarkus.io/guides/rest-json#creating-the-maven-project)
     @GET
     @Path("dapr/subscribe")
     public Set<Subscription> subscribe() {

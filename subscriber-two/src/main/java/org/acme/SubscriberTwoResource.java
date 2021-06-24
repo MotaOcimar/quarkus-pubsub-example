@@ -6,10 +6,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/")
 public class SubscriberTwoResource {
-    // As inscrições para esse subscriber foram feitas declarativamente no arquivo deploy/subscriptions.yaml
-    // TODO: garantir que o nome do arquivo deploy/subscriptions.yaml está atualizado no comentário acima
-    // TODO: Avisar que estou usando Jackson (https://quarkus.io/guides/rest-json#creating-the-maven-project)
-
+    // As inscrições para esse subscriber foram feitas declarativamente nos arquivos deploy/a-subscriptions.yaml e deploy/c-subscriptions.yaml
 
     // Rota para o Dapr entregar as mensagens do tópico A
     @POST
