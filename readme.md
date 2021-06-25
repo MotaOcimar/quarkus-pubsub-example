@@ -1,4 +1,4 @@
-# Quarkus e Pub/Sub
+# Quarkus e Dapr Pub/Sub
 
 ## 1. Entendendo a API Dapr para o Pub/Sub
 
@@ -329,9 +329,15 @@ public class DaprJson {
 Para que o Dapr reconheça o Broker que será utilizado e faça uso devido dessa API, devemos configurar um "componente Dapr" do tipo _pubsub_. Isso é feito com mais um arquivo yaml.
 
 Para esse exemplo, considerarei que temos um broker Rabbit MQ escutando na porta `5672`.
-> **Dica**: Iniciando um broker Rabbit MQ rapidamente:
+> **Dica**:
+>
+> Iniciando um broker Rabbit MQ rapidamente:
 > - **Localmente**: `docker run -p 5672:5672 rabbitmq:3`
 > - **Kubernetes**: `helm install rabbitmq bitnami/rabbitmq`
+
+> **Cuidado**: 
+>
+> Se você usar `helm install rabbitmq bitnami/rabbitmq`, observe que as credenciais são salvas em _persistent volume claims_. Elas **NÃO irão mudar com upgrade ou reinstalação pelo Helm**, a menos que o _persistent volume claims_ tenha sido previamente deletado.
 
 Assim, nosso arquivo `pubsub.yaml` ficará algo como:
 ~~~yaml
@@ -517,7 +523,7 @@ spec:
   ports:
   - protocol: TCP
     port: 8080
-    targetPort: 8000
+    targetPort: 8080
   type: LoadBalancer
 ```
 </details>

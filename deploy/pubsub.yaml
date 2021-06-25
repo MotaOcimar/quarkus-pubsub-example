@@ -7,4 +7,4 @@ spec:
   version: v1
   metadata:
   - name: host
-    value: "amqp://localhost:5672"
+    value: "amqp://user:password@rabbitmq.default.svc.cluster.local:5672" # local: "amqp://localhost:5672"
