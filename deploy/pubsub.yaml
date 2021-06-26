@@ -7,4 +7,11 @@ spec:
   version: v1
   metadata:
   - name: host
-    value: "amqp://user:password@rabbitmq.default.svc.cluster.local:5672" # local: "amqp://localhost:5672"
+    # Descomente a linha abaixo para uso local (sem Kubernetes)
+    # value: "amqp://localhost:5672"
+    # (Não recomendado) Descomente e configure a linha abaixo para uso no Kubernetes
+    # value: "amqp://user:password@rabbitmq.default.svc.cluster.local:5672"
+    # (Recomendado) Descomente e configure a linha abaixo para uso no Kubernetes
+    secretKeyRef:
+      name: rabbitmq-host
+      key:  URI_WITH_PASS

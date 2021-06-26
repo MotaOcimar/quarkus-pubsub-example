@@ -350,9 +350,23 @@ spec:
   version: v1
   metadata:
   - name: host
-    value: "amqp://localhost:5672"
+    # Descomente a linha abaixo para uso local (sem Kubernetes)
+    # value: "amqp://localhost:5672"
+    # (Não recomendado) Descomente e configure a linha abaixo para uso no Kubernetes
+    # value: "amqp://user:password@rabbitmq.default.svc.cluster.local:5672"
+    # (Recomendado) Descomente e configure a linha abaixo para uso no Kubernetes
+    secretKeyRef:
+      name: rabbitmq-host
+      key:  URI_WITH_PASS
 ~~~
 > Mais instruções de como configurar esse arquivo [aqui](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-rabbitmq/).
+
+> **Dica**:
+>
+> Caso tenha usado o Redis para instalar o Rabbit MQ no cluster, você pode configurar o secret usado no arquivo acima com o seguinte comando:
+> ```sh
+> kubectl create secret generic rabbitmq-host --from-literal URI_WITH_PASS="amqp://user:$(kubectl get secret --namespace default rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)@rabbitmq.default.svc.cluster.local:5672" 
+> ```
     
 Assim como os arquivos de subscriptions, caso executando o Dapr localmente, basta colocá-lo no diretório `%USERPROFILE%\.dapr\components\` (Windows) ou `$HOME/.dapr/components` (Linux/MacOS). Para deploy no Kubernetes, esse arquivo deve ser aplicado com um `kubectl apply -f pubsub.yaml`.
 
