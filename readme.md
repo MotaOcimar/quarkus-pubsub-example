@@ -223,6 +223,8 @@ public class SubscriberTwoResource {
 ```
 </details>
 
+> Assim como para o publisher, será necessário uma dependencia como o [Jackson](https://quarkus.io/guides/rest-json) para a leitura do json em ambos subscribers.
+
 Sendo que o SubscriberOne deverá ter a seguinte classe para a formatação do json com as informações de inscrições:
 
 <details>
@@ -380,7 +382,15 @@ Antes de começarmos, devemos lembrar que, ao executarmos os três serviços loc
 ```
 
 Para esse exemplo vamos atribuir as portas `8080`, `8181` e `8282` aos serviços do Publisher, SubscriberOne e SubscriberTwo respectivamente.
-    
+
+> **Lembrete**:
+>
+> Os seguintes arquivos devem estar no diretório  `%USERPROFILE%\.dapr\components\` (Windows) ou `$HOME/.dapr/components` (Linux/MacOS):
+> - a-subscriptions.yaml
+> - c-subscriptions.yaml
+> - pubsub.yaml
+
+
 Prosseguindo, com o [Dapr instalado](https://docs.dapr.io/getting-started/install-dapr-cli/) e o Docker em execução, inicie o Dapr com `dapr init`.
 
 Com o [broker já executando](Quarkus%20e%20Pub-Sub.md#3%20Configurando%20o%20componente%20Pub%20Sub), agora executaremos os serviços com a supervisão do Dapr (cada um em um terminal diferente):
@@ -417,7 +427,6 @@ Modifique o campo `topic` para `A`, `B` ou `C` e o campo  `message` para o valor
 Observe que de fato o SubscriberOne recebe apenas as menssagens dos tópicos `A` e `B`, enquanto o SubscriberTwo apenas as dos tópicos `A` e `C`.
 
 ### No Kubernetes
-> :warning: Abaixo tem os passos esperados a serem seguidos, porém ainda não testei devido o citado erro de build no quarkus. Em breve devo terminar de testar e atualizo aqui caso haja alguma alteração.
 
 Crie os arquivos de deployment de cada serviço. Em cada um, será necessário adiconar o campo _annotations_ em `spec.template.metadata` com algumas informações relevantes ao Dapr:
 ```yaml
@@ -468,7 +477,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  subscriber-one-deployment
+  name:  subscriber-one
 spec:
   replicas: 1
   selector:
@@ -498,7 +507,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  subscriber-two-deployment
+  name:  subscriber-two
 spec:
   replicas: 1
   selector:
@@ -557,7 +566,12 @@ Para executarmos toda nossa aplicação agora, [instale o Dapr no seu cluster](h
     
 > Se seu cluster tiver sido criado com o minikube, execute `dapr init --kubernetes --wait`
 
-Lembre de iniciar seu broker corretamente também. Para esse exemplo, executar `helm install rabbitmq bitnami/rabbitmq` basta.
+Lembre de iniciar seu broker corretamente também. Para esse exemplo, os seguintes comandos são suficientes:
+```sh
+helm install rabbitmq bitnami/rabbitmq
+kubectl create secret generic rabbitmq-host --from-literal URI_WITH_PASS="amqp://user:$(kubectl get secret --namespace default rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)@rabbitmq.default.svc.cluster.local:5672" 
+
+```
     
 Agora basta aplicar as configurações criadas nos arquivos yaml com `kubectl apply -f ./deploy`
 
@@ -578,3 +592,12 @@ Para testar, envie a request `POST localhost:8080/publish` com um json no format
 Modifique o campo `topic` para `A`, `B` ou `C` e o campo  `message` para o valor que você quiser enviar.
 
 Observe que de fato o SubscriberOne recebe apenas as menssagens dos tópicos `A` e `B`, enquanto o SubscriberTwo apenas as dos tópicos `A` e `C`.
+
+> **Dica**:
+>
+> Para obter os logs mais recentes de cada serviço, use:
+> ```sh
+> kubectl logs --selector app=publisher -c publisher
+> kubectl logs --selector app=subscriber-one -c subscriber-one
+> kubectl logs --selector app=subscriber-two -c subscriber-two
+> ```

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  subscriber-one-deployment
+  name:  subscriber-one
 spec:
   replicas: 1
   selector:
